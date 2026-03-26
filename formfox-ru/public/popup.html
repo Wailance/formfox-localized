@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FormFox</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --card: #111b31;
+        --text: #e7eefc;
+        --muted: #9bb0d0;
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #4ea1ff;
+        --danger: #ff5c7a;
+        --ok: #2ee59d;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        width: 420px;
+      }
+
+      .wrap {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .section {
+        margin-top: 12px;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"] {
+        width: 100%;
+        box-sizing: border-box;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px;
+        outline: none;
+      }
+
+      .field {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        align-items: start;
+        margin-top: 8px;
+      }
+
+      .field .field-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      button:hover {
+        border-color: rgba(78, 161, 255, 0.7);
+      }
+
+      button.primary {
+        border-color: rgba(78, 161, 255, 0.7);
+        background: rgba(78, 161, 255, 0.12);
+      }
+
+      button.danger {
+        border-color: rgba(255, 92, 122, 0.7);
+        background: rgba(255, 92, 122, 0.12);
+      }
+
+      button.ok {
+        border-color: rgba(46, 229, 157, 0.7);
+        background: rgba(46, 229, 157, 0.12);
+      }
+
+      .profiles {
+        display: grid;
+        gap: 8px;
+      }
+
+      .profile-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .profile-title {
+        font-size: 13px;
+        font-weight: 800;
+        margin: 0 0 8px 0;
+      }
+
+      .profile-meta {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .profile-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .hr {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 0;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .toggle-row input {
+        width: 18px;
+        height: 18px;
+      }
+
+      .small {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.35;
+        min-height: 18px;
+      }
+
+      select.lang-select {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>FormFox: профили и автозаполнение</h1>
+
+      <div class="section">
+        <div class="row" style="justify-content: space-between;">
+          <div>
+            <div style="font-weight: 800; font-size: 13px; margin-bottom: 6px;">Профили</div>
+            <div class="small">Хранится локально в `chrome.storage.local`.</div>
+          </div>
+          <button id="btnRefresh" class="primary" type="button">Обновить</button>
+        </div>
+        <div class="hr"></div>
+        <div class="profiles" id="profiles"></div>
+        <div class="hint" id="profilesEmpty" style="display:none;">
+          Профилей пока нет. Создайте первый профиль ниже.
+        </div>
+      </div>
+
+      <div class="section">
+        <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">Создание / редактирование</div>
+        <label for="profileName">Название профиля</label>
+        <input id="profileName" type="text" placeholder="Например, ООО Ромашка" />
+
+        <div class="toggle-row">
+          <input id="autoConfirm" type="checkbox" checked />
+          <label for="autoConfirm" style="margin:0;">
+            Автозаполнение без подтверждения
+          </label>
+        </div>
+
+        <div style="height: 8px;"></div>
+        <div class="hint">
+          Для каждого поля укажите “что искать” (ключ) и “что подставить”.
+          Ключ сравнивается с `name/id/placeholder/aria-label` и текстом рядом с полем.
+        </div>
+
+        <div id="fields"></div>
+
+        <div class="profile-actions" style="justify-content: flex-start; margin-top: 12px;">
+          <button id="btnAddField" type="button">Добавить поле</button>
+          <button id="btnSaveProfile" class="ok" type="button">Сохранить профиль</button>
+          <button id="btnClearForm" type="button">Сброс</button>
+        </div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="section">
+        <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">Импорт / экспорт</div>
+        <div class="profile-actions" style="justify-content: flex-start;">
+          <button id="btnExport" type="button">Экспорт JSON</button>
+          <button id="btnImport" type="button">Импорт JSON</button>
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
+        </div>
+        <div class="hint" style="margin-top: 8px;">
+          Импорт полностью заменяет текущий список профилей.
+        </div>
+      </div>
+    </div>
+
+    <script src="../dist/popup.js"></script>
+  </body>
+</html>
+

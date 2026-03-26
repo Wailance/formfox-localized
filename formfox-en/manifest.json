@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "FormFox",
+  "version": "0.1.0",
+  "description": "Save profile data and fill forms in one click.",
+  "action": {
+    "default_title": "FormFox",
+    "default_popup": "public/popup.html"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "dist/background.js"
+  }
+}
