@@ -1,6 +1,6 @@
 import type { FormFoxField, FormFoxProfile } from "./types";
 import { deleteProfile, getProfiles, setProfiles, upsertProfile } from "./utils/storage";
-import type { FillFormMessage, InnLookupData, LookupInnMessage } from "./types";
+import type { InnLookupData, LookupInnMessage } from "./types";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -9,7 +9,6 @@ const elProfilesEmpty = $("profilesEmpty");
 const elStatus = $("status");
 
 const elProfileName = $("profileName") as HTMLInputElement;
-const elAutoConfirm = $("autoConfirm") as HTMLInputElement;
 const elFields = $("fields") as HTMLDivElement;
 
 const btnRefresh = $("btnRefresh") as HTMLButtonElement;
@@ -32,10 +31,24 @@ let draftFields: FormFoxField[] = [];
 const BASE_FIELDS: FormFoxField[] = [
   { key: "Название организации", value: "" },
   { key: "Краткое наименование", value: "" },
+  { key: "Полное наименование ОПФ", value: "" },
+  { key: "Организационно-правовая форма", value: "" },
   { key: "ИНН", value: "" },
   { key: "КПП", value: "" },
   { key: "ОГРН", value: "" },
+  { key: "Дата регистрации", value: "" },
   { key: "Юридический адрес", value: "" },
+  { key: "Код налогового органа", value: "" },
+  { key: "Наименование налогового органа", value: "" },
+  { key: "Регистрирующий орган", value: "" },
+  { key: "Регистрационный номер", value: "" },
+  { key: "Регистрационный номер СФР", value: "" },
+  { key: "Дата регистрации в СФР", value: "" },
+  { key: "Уставный капитал", value: "" },
+  { key: "Руководитель (ФИО)", value: "" },
+  { key: "Должность руководителя", value: "" },
+  { key: "ОКВЭД основной (код)", value: "" },
+  { key: "ОКВЭД основной (наименование)", value: "" },
   { key: "Расчетный счет", value: "" },
   { key: "Банк", value: "" },
   { key: "БИК", value: "" },
@@ -48,6 +61,10 @@ const PRESET_PROFILES: Array<{ name: string; fields: FormFoxField[] }> = [
     fields: [
       ...BASE_FIELDS,
       { key: "ОКПО", value: "" },
+      { key: "Режим налогообложения", value: "" },
+      { key: "НДС", value: "" },
+      { key: "КБК", value: "" },
+      { key: "ОКТМО", value: "" },
       { key: "ФИО главного бухгалтера", value: "" },
       { key: "Телефон бухгалтерии", value: "" },
       { key: "Email бухгалтерии", value: "" },
@@ -57,6 +74,12 @@ const PRESET_PROFILES: Array<{ name: string; fields: FormFoxField[] }> = [
     name: "Шаблон: Юрист",
     fields: [
       ...BASE_FIELDS,
+      { key: "Основание полномочий подписанта", value: "Устав" },
+      { key: "Статус организации", value: "" },
+      { key: "Лицензии (кратко)", value: "" },
+      { key: "Реестродержатель", value: "" },
+      { key: "ИНН реестродержателя", value: "" },
+      { key: "ОГРН реестродержателя", value: "" },
       { key: "Должность подписанта", value: "Генеральный директор" },
       { key: "ФИО подписанта", value: "" },
       { key: "Основание полномочий", value: "Устав" },
@@ -104,10 +127,33 @@ function upsertDraftField(key: string, value: string) {
 function applyInnDataToDraft(data: InnLookupData) {
   if (data.fullName) upsertDraftField("Название организации", data.fullName);
   if (data.shortName) upsertDraftField("Краткое наименование", data.shortName);
+  if (data.opfFull) upsertDraftField("Полное наименование ОПФ", data.opfFull);
+  if (data.opfShort) upsertDraftField("Организационно-правовая форма", data.opfShort);
   if (data.inn) upsertDraftField("ИНН", data.inn);
   if (data.kpp) upsertDraftField("КПП", data.kpp);
   if (data.ogrn) upsertDraftField("ОГРН", data.ogrn);
+  if (data.registrationDate) upsertDraftField("Дата регистрации", data.registrationDate);
   if (data.legalAddress) upsertDraftField("Юридический адрес", data.legalAddress);
+  if (data.taxAuthorityCode) upsertDraftField("Код налогового органа", data.taxAuthorityCode);
+  if (data.taxAuthorityName) upsertDraftField("Наименование налогового органа", data.taxAuthorityName);
+  if (data.registrationAuthorityName) upsertDraftField("Регистрирующий орган", data.registrationAuthorityName);
+  if (data.registrationNumber) upsertDraftField("Регистрационный номер", data.registrationNumber);
+  if (data.sfRegistrationNumber) upsertDraftField("Регистрационный номер СФР", data.sfRegistrationNumber);
+  if (data.sfRegistrationDate) upsertDraftField("Дата регистрации в СФР", data.sfRegistrationDate);
+  if (data.authorizedCapital) upsertDraftField("Уставный капитал", data.authorizedCapital);
+  if (data.directorFullName) {
+    upsertDraftField("Руководитель (ФИО)", data.directorFullName);
+    upsertDraftField("ФИО подписанта", data.directorFullName);
+  }
+  if (data.directorPosition) {
+    upsertDraftField("Должность руководителя", data.directorPosition);
+    upsertDraftField("Должность подписанта", data.directorPosition);
+  }
+  if (data.mainOkvedCode) upsertDraftField("ОКВЭД основной (код)", data.mainOkvedCode);
+  if (data.mainOkvedName) upsertDraftField("ОКВЭД основной (наименование)", data.mainOkvedName);
+  if (data.registryHolderName) upsertDraftField("Реестродержатель", data.registryHolderName);
+  if (data.registryHolderInn) upsertDraftField("ИНН реестродержателя", data.registryHolderInn);
+  if (data.registryHolderOgrn) upsertDraftField("ОГРН реестродержателя", data.registryHolderOgrn);
 }
 
 function renderFieldRow(index: number, field: FormFoxField) {
@@ -190,7 +236,6 @@ function loadDraftFromProfile(profile: FormFoxProfile | null) {
   if (!profile) {
     editingProfileId = null;
     elProfileName.value = "";
-    elAutoConfirm.checked = true;
     draftFields = [];
     renderDraft();
     return;
@@ -198,7 +243,6 @@ function loadDraftFromProfile(profile: FormFoxProfile | null) {
 
   editingProfileId = profile.id;
   elProfileName.value = profile.name;
-  elAutoConfirm.checked = Boolean(profile.autoConfirm);
   draftFields = profile.fields.map((f) => ({ key: f.key, value: f.value }));
   renderDraft();
 }
@@ -227,12 +271,6 @@ function renderProfilesList() {
     const actions = document.createElement("div");
     actions.className = "profile-actions";
 
-    const btnFill = document.createElement("button");
-    btnFill.type = "button";
-    btnFill.className = "primary";
-    btnFill.textContent = "Заполнить";
-    btnFill.addEventListener("click", () => onFillProfile(p));
-
     const btnEdit = document.createElement("button");
     btnEdit.type = "button";
     btnEdit.textContent = "Редактировать";
@@ -250,7 +288,6 @@ function renderProfilesList() {
       setStatus("Профиль удалён.");
     });
 
-    actions.appendChild(btnFill);
     actions.appendChild(btnEdit);
     actions.appendChild(btnDelete);
 
@@ -259,47 +296,6 @@ function renderProfilesList() {
     card.appendChild(actions);
 
     elProfiles.appendChild(card);
-  }
-}
-
-async function onFillProfile(profile: FormFoxProfile) {
-  try {
-    setStatus("Подготавливаю заполнение...");
-
-    if (!profile.autoConfirm) {
-      const keys = profile.fields.map((f) => f.key).filter(Boolean);
-      const preview = keys.slice(0, 6).join(", ") + (keys.length > 6 ? "..." : "");
-      const ok = confirm(`Заполнить профиль "${profile.name}"?\nПоля: ${preview}`);
-      if (!ok) return;
-    }
-
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tab = tabs[0];
-    if (!tab || typeof tab.id !== "number" || !tab.url) {
-      setStatus("Не удалось определить активную вкладку.", true);
-      return;
-    }
-
-    const msg: FillFormMessage = { type: "FILL_FORM", tabId: tab.id, profile };
-    await new Promise<void>((resolve, reject) => {
-      chrome.runtime.sendMessage(msg, (res) => {
-        const err = chrome.runtime.lastError;
-        if (err) {
-          reject(err);
-          return;
-        }
-        if (!res?.ok) {
-          reject(new Error(res?.error || "Unknown error"));
-          return;
-        }
-        resolve();
-      });
-    });
-
-    setStatus("Заполнение запущено. Если форма динамическая, иногда требуется немного подождать.");
-  } catch (err: any) {
-    console.error("[FormFox] onFillProfile error:", err);
-    setStatus(err?.message || String(err), true);
   }
 }
 
@@ -372,7 +368,7 @@ async function lookupByInn() {
     }
     applyInnDataToDraft(result.data);
     renderDraft();
-    setStatus("Реквизиты по ИНН подставлены в черновик.");
+    setStatus("Реквизиты по ИНН подставлены в шаблон.");
   } catch (err: any) {
     console.error("[FormFox] lookupByInn error:", err);
     setStatus(err?.message || String(err), true);
@@ -400,7 +396,7 @@ async function onSaveProfile() {
       id: editingProfileId ?? uid(),
       name,
       fields,
-      autoConfirm: Boolean(elAutoConfirm.checked),
+      autoConfirm: true,
       updatedAt: Date.now(),
     };
 

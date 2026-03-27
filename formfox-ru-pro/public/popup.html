@@ -194,7 +194,7 @@
   </head>
   <body>
     <div class="wrap">
-      <h1>FormFox: профили и автозаполнение</h1>
+      <h1>FormFox RU Pro: реквизиты по ИНН</h1>
 
       <div class="section">
         <div class="row" style="justify-content: space-between;">
@@ -219,17 +219,10 @@
         <label for="profileName">Название профиля</label>
         <input id="profileName" type="text" placeholder="Например, ООО Ромашка" />
 
-        <div class="toggle-row">
-          <input id="autoConfirm" type="checkbox" checked />
-          <label for="autoConfirm" style="margin:0;">
-            Автозаполнение без подтверждения
-          </label>
-        </div>
-
         <div style="height: 8px;"></div>
         <div class="hint">
-          Для каждого поля укажите “что искать” (ключ) и “что подставить”.
-          Ключ сравнивается с `name/id/placeholder/aria-label` и текстом рядом с полем.
+          Храните карточки реквизитов для бухгалтерии и юристов.
+          Автозаполнение форм в этой версии отключено.
         </div>
 
         <div style="height: 8px;"></div>
@@ -239,7 +232,7 @@
           <button id="btnLookupInn" class="primary" type="button">Подтянуть</button>
         </div>
         <div class="small" style="margin-top: 6px;">
-          Источник: egrul.org. Заполняет название, ИНН, КПП, ОГРН и адрес.
+          Источник: egrul.org. Подтягиваются реквизиты юрлица/ИП для выбранного шаблона.
         </div>
 
         <div id="fields"></div>

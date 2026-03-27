@@ -7,9 +7,9 @@
     "default_title": "FormFox",
     "default_popup": "public/popup.html"
   },
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage"],
   "host_permissions": ["https://egrul.org/*"],
-  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "optional_host_permissions": [],
   "background": {
     "service_worker": "dist/background.js"
   }

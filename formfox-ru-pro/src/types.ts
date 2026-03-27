@@ -47,9 +47,26 @@ export type LookupInnMessage = {
 export type InnLookupData = {
   shortName: string;
   fullName: string;
+  opfShort: string;
+  opfFull: string;
   inn: string;
   kpp: string;
   ogrn: string;
+  registrationDate: string;
+  taxAuthorityCode: string;
+  taxAuthorityName: string;
+  registrationAuthorityName: string;
+  registrationNumber: string;
+  sfRegistrationNumber: string;
+  sfRegistrationDate: string;
+  authorizedCapital: string;
+  directorFullName: string;
+  directorPosition: string;
+  mainOkvedCode: string;
+  mainOkvedName: string;
+  registryHolderName: string;
+  registryHolderInn: string;
+  registryHolderOgrn: string;
   legalAddress: string;
 };
 
