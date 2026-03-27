@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "FormFox RU Pro",
+  "version": "0.1.0",
+  "description": "RU-версия с шаблонами профилей и автоподтягиванием реквизитов по ИНН.",
+  "action": {
+    "default_title": "FormFox",
+    "default_popup": "public/popup.html"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://egrul.org/*"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "dist/background.js"
+  }
+}
